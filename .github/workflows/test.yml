@@ -24,6 +24,21 @@ jobs:
           echo "This is a LAB demonstrating a risky workflow pattern."
           echo "bad code"
           echo ${{ github.event.pull_request.title }}
+
+          echo "-----------------------------seperation--------------------"
+          echo "quoted pr title"
+          echo "${{ github.event.pull_request.title }}"
+
+          echo "----------------------------separation----------------------"
+          echo "pr title description"
+          echo ${{ github.event.pull_request.description }}
+          echo "--------------------------------------------------------------"
+          PR_TITLE="${{ github.event.pull_request.title}}"
+          PR_TITLE1=${{ github.event.pull_request.title}}
+          echo "case 1 $PR_TITLE"
+          echo $PR_TITLE
+          echo "case 3 $PR_TITLE1"
+          echo PR_TITLE1
       - name: Checkout base (trusted)  # safe approach: checkout base if using pull_request_target
         uses: actions/checkout@v4
         with:
