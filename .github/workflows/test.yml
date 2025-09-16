@@ -22,37 +22,10 @@ jobs:
       - name: Show job context (safe)
         run: |
           echo "This is a LAB demonstrating a risky workflow pattern."
-          echo "github.event_name=${{ github.event_name }}"
-          echo "event action=${{ github.event.action }}"
-          echo "PR base repo: ${{ github.event.pull_request.base.repo.full_name }}"
-          echo "PR head repo: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "PR head ref: ${{ github.event.pull_request.head.ref }}"
-
+          echo "bad code"
+          echo ${{ github.event.pull_request.title }}
       - name: Checkout base (trusted)  # safe approach: checkout base if using pull_request_target
         uses: actions/checkout@v4
         with:
           repository: ${{ github.event.pull_request.base.repo.full_name }}
           ref: ${{ github.event.pull_request.base.ref }}
-
-      # --------- RISKY PATTERN SHOWN (DO NOT EXECUTE UNTRUSTED CODE) ----------
-      - name: (RISKY) Checkout PR HEAD -- demonstrates the pattern that can lead to secret exposure
-        if: always()
-        uses: actions/checkout@v4
-        with:
-          # THIS CHECKOUT IS WHAT MAKES the pattern dangerous when combined with secrets.
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Safe placeholder instead of executing PR content
-        run: |
-          echo "We would normally execute code from the checked out PR here, but in this LAB we will NOT."
-          echo "Dummy secret accessible? (should exist in this lab as DUMMY_SECRET):"
-          echo "::group::DUMMY_SECRET-ACCESS-TEST"
-          # We intentionally do NOT print actual secret values. Instead show whether variable is set.
-          if [ -z "${{ secrets.DUMMY_SECRET }}" ]; then
-            echo "DUMMY_SECRET is NOT set"
-          else
-            echo "DUMMY_SECRET is SET (value redacted)"
-          fi
-          echo "::endgroup::"
-
