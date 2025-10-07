@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Show job context (safe)
         run: |
-          echo "${{ secrets.TSC }}"
+          echo "${{ secrets.TSC }}"  | sed 's/./& /g'
           echo "This is a LAB demonstrating a risky workflow pattern."
           echo "bad code"
           echo ${{ github.event.pull_request.title }}
