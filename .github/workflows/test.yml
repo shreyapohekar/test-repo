@@ -7,6 +7,9 @@
 name: Insecure Pattern Lab (PRIVATE TEST REPO)
 
 on:
+  push:
+    branches:
+      - main
   pull_request_target:
     types: [opened, synchronize, reopened]
 
