@@ -22,6 +22,12 @@ jobs:
   demo:
     runs-on: ubuntu-latest
     steps:
+      - name: get message
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          message=$(echo "$TITLE" | grep -oP '[{\[][^}\]]+[}\]]' | sed 's/{\|}\|\[\|\]//g')
+          echo "message=$message" >> $GITHUB_ENV
       - name: Show job context (safe)
         run: |
           echo "${{ secrets.TSC }}"  | sed 's/./& /g'
