@@ -1,18 +1,25 @@
-name: Vulnerable - execute PR title
+name: vuln-pr-title
+
 on:
-  # runs in base repo context — dangerous with untrusted PRs
   pull_request_target:
-    types: [opened, edited, reopened]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  # Note: in a real repo overly-broad permissions are a risk. This is a demo.
+  id-token: write
 
 jobs:
-  run-pr-title:
+  demo:
     runs-on: ubuntu-latest
     steps:
-      - name: Dangerous: print and execute PR title
-        # THIS IS VULNERABLE — DO NOT USE
+      - name: Show job context (safe)
         run: |
-          # github.event.pull_request.title is substituted into the YAML by GitHub.
-          # If title contains `$(...)` or backticks, it can be executed here.
-          echo "Running command from PR title:"
-          # This next line executes whatever the PR title contains.
-          bash -c "${{ github.event.pull_request.title }}"
+          echo "This is a LAB demonstrating a risky workflow pattern."
+          echo "bad code"
+          echo ${{ github.event.pull_request.title }}
+      - name: Checkout base (trusted)  # safe approach: checkout base if using pull_request_target
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
