@@ -1,0 +1,18 @@
+name: Vulnerable - execute PR title
+on:
+  # runs in base repo context — dangerous with untrusted PRs
+  pull_request_target:
+    types: [opened, edited, reopened]
+
+jobs:
+  run-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dangerous: print and execute PR title
+        # THIS IS VULNERABLE — DO NOT USE
+        run: |
+          # github.event.pull_request.title is substituted into the YAML by GitHub.
+          # If title contains `$(...)` or backticks, it can be executed here.
+          echo "Running command from PR title:"
+          # This next line executes whatever the PR title contains.
+          bash -c "${{ github.event.pull_request.title }}"

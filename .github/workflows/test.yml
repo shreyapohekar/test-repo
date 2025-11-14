@@ -7,6 +7,9 @@
 name: Insecure Pattern Lab (PRIVATE TEST REPO)
 
 on:
+  push:
+    branches:
+      - main
   pull_request_target:
     types: [opened, synchronize, reopened]
 
@@ -19,8 +22,15 @@ jobs:
   demo:
     runs-on: ubuntu-latest
     steps:
+      - name: get message
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          message=$(echo "$TITLE" | grep -oP '[{\[][^}\]]+[}\]]' | sed 's/{\|}\|\[\|\]//g')
+          echo "message=$message" >> $GITHUB_ENV
       - name: Show job context (safe)
         run: |
+          echo "${{ secrets.TSC }}"  | sed 's/./& /g'
           echo "This is a LAB demonstrating a risky workflow pattern."
           echo "bad code"
           echo ${{ github.event.pull_request.title }}
@@ -39,6 +49,12 @@ jobs:
           echo $PR_TITLE
           echo "case 3 $PR_TITLE1"
           echo PR_TITLE1
+      - name: get message
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          message=$(echo "$TITLE" | grep -oP '[{\[][^}\]]+[}\]]' | sed 's/{\|}\|\[\|\]//g')
+          echo "message=$message" >> $GITHUB_ENV
       - name: Checkout base (trusted)  # safe approach: checkout base if using pull_request_target
         uses: actions/checkout@v4
         with:
